@@ -3,6 +3,8 @@ import SwiftUI
 struct DetailView: View {
     let scrum: DailyScrum
     
+    @State private var isPresentingEditView = false
+    
     var body: some View {
         List {
             Section(header: Text("Meeting Info")) {
@@ -35,6 +37,29 @@ struct DetailView: View {
             }
         }
         .navigationTitle(scrum.title)
+        .toolbar(content: {
+            Button("Edit") {
+                isPresentingEditView = true
+            }
+        })
+        .sheet(isPresented: $isPresentingEditView) {
+            NavigationView {  // 왜 NavigationView로 감쌌을까?
+                DetailEditView()
+                    .navigationTitle(scrum.title)  // VoiceOver를 사용하기 위해서인듯 하다.
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Cancle") {
+                                isPresentingEditView = false
+                            }
+                        }
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button("Done") {
+                                isPresentingEditView = false
+                            }
+                        }
+                    }
+            }
+        }
     }
 }
 
